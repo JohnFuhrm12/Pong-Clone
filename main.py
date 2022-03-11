@@ -9,7 +9,7 @@ pygame.init()
 # Cursors
 C_WIDTH = 18
 C_HEIGHT = 100
-VEL = 10
+VEL = 15
 
 # Screen Variables
 WIDTH, HEIGHT = 800, 600
@@ -59,8 +59,8 @@ def game_loop_mult():
     pointsp2 = 0
 
     # Ball Variables
-    ball_speed_x = -3
-    ball_speed_y = 3
+    ball_speed_x = -10
+    ball_speed_y = 10
     BALL_X = 400
     BALL_Y = 300
 
@@ -110,16 +110,29 @@ def game_loop_mult():
             ball_speed_x *= -1
 
         if BALL_X < 10:
-            sleep(1)
+            sleep(0.5)
             BALL_X = 400
             BALL_Y = 300
-            pointsp2 =+ 1
+            pointsp2 += 1
+            print(str(pointsp1))
+            print(str(pointsp2))
         if BALL_X > 790:
-            sleep(0.8)
+            sleep(0.5)
             BALL_X = 400
             BALL_Y = 300
-            pointsp1 =+ 1
+            pointsp1 += 1
+            print(str(pointsp1))
+            print(str(pointsp2))
 
+        # Scoreboard Text
+        SCORE_FONT = pygame.font.SysFont('impact', 50)
+        P1_SCORE = SCORE_FONT.render(
+            (str(pointsp1)), 1, WHITE)
+        P2_SCORE = SCORE_FONT.render(
+            (str(pointsp2)), 1, WHITE)
+
+        WIN.blit(P1_SCORE, (330, 10))
+        WIN.blit(P2_SCORE, (445, 10))
 
         if BALL_Y < 10:
             ball_speed_y *= -1
