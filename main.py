@@ -28,9 +28,20 @@ TITLE_TEXT = TITLE_FONT.render(
     ("PONG"), 1, WHITE)
 MULT_BUTTON = button.Button(200, 200, button.BUTTON_TEXT)
 
+# Winner Text
+WINNER_FONT = pygame.font.SysFont('impact', 100)
+
 # On-Screen Objects
 def draw_objects():
     pygame.draw.rect(WIN, WHITE, BORDER)  # Middle Border
+
+# Ends the game and displays who won
+def end_game(text):
+    draw_text = WINNER_FONT.render(text, 1, WHITE)
+    WIN.blit(draw_text, (WIDTH/2 - draw_text.get_width() /
+                         2, HEIGHT/2 - draw_text.get_height()/2))
+    pygame.display.update()
+    pygame.time.delay(2000)
 
 # Main Menu Loop
 def main_menu():
@@ -115,7 +126,7 @@ def game_loop_mult():
         if right_cursor.colliderect(ball):
             ball_speed_x *= -1
 
-        # Ball re-appear and add score for sides
+        # Ball re-appear and add score for sides + delay
         if BALL_X < 10:
             sleep(0.5)
             BALL_X = 400
@@ -143,6 +154,18 @@ def game_loop_mult():
         # Score Display
         WIN.blit(P1_SCORE, (330, 10))
         WIN.blit(P2_SCORE, (445, 10))
+
+        # End game at x points
+        winner_text = ""
+        if pointsp1 == 10:
+            winner_text = "Player 1 Wins!"
+
+        if pointsp2 == 10:
+            winner_text = "Player 2 Wins!"
+
+        if winner_text != "":
+            end_game(winner_text)
+            break
 
         # Update screen display
         pygame.display.update()
