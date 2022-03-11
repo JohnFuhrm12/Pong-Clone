@@ -9,7 +9,7 @@ pygame.init()
 # Cursors
 C_WIDTH = 18
 C_HEIGHT = 100
-VEL = 15
+VEL = 15  # Cursor Speed
 
 # Screen Variables
 WIDTH, HEIGHT = 800, 600
@@ -85,44 +85,53 @@ def game_loop_mult():
                 if event.key == pygame.K_ESCAPE:
                     run = False
 
+        # Keep track of keys pressed
         keys = pygame.key.get_pressed()
 
+        # Left Cursor Keys
         if keys[pygame.K_w] and LEFT_Y > 10:
             LEFT_Y -= VEL
         if keys[pygame.K_s] and LEFT_Y < 590 - C_HEIGHT:
             LEFT_Y += VEL
 
+        # Right Cursor Keys
         if keys[pygame.K_i] and RIGHT_Y > 10:
             RIGHT_Y -= VEL
         if keys[pygame.K_k] and RIGHT_Y < 590 - C_HEIGHT:
             RIGHT_Y += VEL
 
+        # Setting ball movement speed
         BALL_X += ball_speed_x
         BALL_Y += ball_speed_y
 
+        # Drawing on-screen objects
         left_cursor = pygame.draw.rect(WIN, WHITE, (LEFT_X, LEFT_Y, C_WIDTH, C_HEIGHT))
         right_cursor = pygame.draw.rect(WIN, WHITE, (RIGHT_X, RIGHT_Y, C_WIDTH, C_HEIGHT))
         ball = pygame.draw.circle(WIN, (WHITE), [BALL_X, BALL_Y], 15, 0)
 
+        # Cursor bounce mechanics
         if left_cursor.colliderect(ball):
             ball_speed_x *= -1
         if right_cursor.colliderect(ball):
             ball_speed_x *= -1
 
+        # Ball re-appear and add score for sides
         if BALL_X < 10:
             sleep(0.5)
             BALL_X = 400
             BALL_Y = 300
             pointsp2 += 1
-            print(str(pointsp1))
-            print(str(pointsp2))
         if BALL_X > 790:
             sleep(0.5)
             BALL_X = 400
             BALL_Y = 300
             pointsp1 += 1
-            print(str(pointsp1))
-            print(str(pointsp2))
+
+        # Ball top/bottom bounce mechanics
+        if BALL_Y < 10:
+            ball_speed_y *= -1
+        if BALL_Y > 590:
+            ball_speed_y *= -1
 
         # Scoreboard Text
         SCORE_FONT = pygame.font.SysFont('impact', 50)
@@ -131,14 +140,11 @@ def game_loop_mult():
         P2_SCORE = SCORE_FONT.render(
             (str(pointsp2)), 1, WHITE)
 
+        # Score Display
         WIN.blit(P1_SCORE, (330, 10))
         WIN.blit(P2_SCORE, (445, 10))
 
-        if BALL_Y < 10:
-            ball_speed_y *= -1
-        if BALL_Y > 590:
-            ball_speed_y *= -1
-
+        # Update screen display
         pygame.display.update()
 
 
