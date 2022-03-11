@@ -6,6 +6,10 @@ from time import sleep
 
 pygame.init()
 
+# Sounds
+SCORE = pygame.mixer.Sound('Assets/score.mp3')
+HIT = pygame.mixer.Sound('Assets/hit.mp3')
+
 # Cursors
 C_WIDTH = 18
 C_HEIGHT = 100
@@ -123,8 +127,10 @@ def game_loop_mult():
         # Cursor bounce mechanics
         if left_cursor.colliderect(ball):
             ball_speed_x *= -1
+            HIT.play()
         if right_cursor.colliderect(ball):
             ball_speed_x *= -1
+            HIT.play()
 
         # Ball re-appear and add score for sides + delay
         if BALL_X < 10:
@@ -132,11 +138,13 @@ def game_loop_mult():
             BALL_X = 400
             BALL_Y = 300
             pointsp2 += 1
+            SCORE.play()
         if BALL_X > 790:
             sleep(0.5)
             BALL_X = 400
             BALL_Y = 300
             pointsp1 += 1
+            SCORE.play()
 
         # Ball top/bottom bounce mechanics
         if BALL_Y < 10:

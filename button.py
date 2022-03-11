@@ -1,6 +1,11 @@
 import pygame
 import os
 
+pygame.init()
+
+# Sounds
+MENU_SELECT = pygame.mixer.Sound('Assets/menuselect.mp3')
+
 BUTTON_TEXT = pygame.transform.scale(pygame.image.load(
                 os.path.join("Assets", "mult1.png")), (400, 100))
 
@@ -33,6 +38,7 @@ class Button:
             if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
                 self.clicked = True
                 action = True
+                MENU_SELECT.play()
 
         if not self.rect.collidepoint(pos):
             self.image = pygame.transform.scale(pygame.image.load(
