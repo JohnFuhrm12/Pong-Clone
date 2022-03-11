@@ -227,6 +227,9 @@ def game_loop_mult():
 
 # Blitz multiplayer game loop
 def game_loop_blitz():
+    # Ball Color
+    ball_color = 0
+
     # Cursor Speed
     VELB = 25
 
@@ -283,33 +286,59 @@ def game_loop_blitz():
         # Drawing on-screen objects
         left_cursor = pygame.draw.rect(WIN, WHITE, (LEFT_X, LEFT_Y, C_WIDTH, C_HEIGHT))
         right_cursor = pygame.draw.rect(WIN, WHITE, (RIGHT_X, RIGHT_Y, C_WIDTH, C_HEIGHT))
-        ball = pygame.draw.circle(WIN, (WHITE), [BALL_X, BALL_Y], 15, 0)
+        ball = pygame.draw.circle(WIN, WHITE, [BALL_X, BALL_Y], 15, 0)
 
         # Left Cursor bounce mechanics
         if ball.collidepoint(left_cursor.topright):
             ball_speed_x *= -1.2
             ball_speed_y *= -1.2
+            ball_color += 1
             HIT.play()
         if ball.collidepoint(left_cursor.bottomright):
             ball_speed_x *= -1.2
             ball_speed_y *= -1.2
+            ball_color += 1
             HIT.play()
         elif left_cursor.colliderect(ball) and not ball.collidepoint(left_cursor.topright) or ball.collidepoint(left_cursor.bottomright):
             ball_speed_x *= -1.2
+            ball_color += 1
             HIT.play()
 
         # Right Cursor bounce mechanics
         if ball.collidepoint(right_cursor.topleft):
             ball_speed_x *= -1.2
             ball_speed_y *= -1.2
+            ball_color += 1
             HIT.play()
         if ball.collidepoint(right_cursor.bottomleft):
             ball_speed_x *= -1.2
             ball_speed_y *= -1.2
+            ball_color += 1
             HIT.play()
         elif right_cursor.colliderect(ball) and not ball.collidepoint(right_cursor.topleft) or ball.collidepoint(right_cursor.bottomleft):
             ball_speed_x *= -1.2
+            ball_color += 1
             HIT.play()
+
+        # Change ball color
+        if ball_color == 1:
+            ball = pygame.draw.circle(WIN, (227, 232, 172), [BALL_X, BALL_Y], 15, 0)
+        elif ball_color == 2:
+            ball = pygame.draw.circle(WIN, (198, 207, 103), [BALL_X, BALL_Y], 15, 0)
+        elif ball_color == 3:
+            ball = pygame.draw.circle(WIN, (217, 235, 38), [BALL_X, BALL_Y], 15, 0)
+        elif ball_color == 4:
+            ball = pygame.draw.circle(WIN, (245, 185, 34), [BALL_X, BALL_Y], 15, 0)
+        elif ball_color == 5:
+            ball = pygame.draw.circle(WIN, (252, 114, 8), [BALL_X, BALL_Y], 15, 0)
+        elif ball_color == 6:
+            ball = pygame.draw.circle(WIN, (252, 77, 8), [BALL_X, BALL_Y], 15, 0)
+        elif ball_color == 7:
+            ball = pygame.draw.circle(WIN, (252, 8, 8), [BALL_X, BALL_Y], 15, 0)
+        elif ball_color == 8:
+            ball = pygame.draw.circle(WIN, (0, 229, 255), [BALL_X, BALL_Y], 15, 0)
+        elif ball_color > 8:
+            ball = pygame.draw.circle(WIN, (0, 26, 255), [BALL_X, BALL_Y], 15, 0)
 
         # Ball re-appear and add score for sides + delay
         if BALL_X < 10:
@@ -318,6 +347,7 @@ def game_loop_blitz():
             BALL_Y = 300
             ball_speed_x = -5
             ball_speed_y = 5
+            ball_color = 0
             pointsp2 += 1
             SCORE.play()
         if BALL_X > 790:
@@ -326,6 +356,7 @@ def game_loop_blitz():
             BALL_Y = 300
             ball_speed_x = -5
             ball_speed_y = 5
+            ball_color = 0
             pointsp1 += 1
             SCORE.play()
 
