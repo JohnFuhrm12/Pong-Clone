@@ -2,6 +2,8 @@ import pygame
 import button
 import sys
 
+from time import sleep
+
 pygame.init()
 
 # Cursors
@@ -52,18 +54,21 @@ def main_menu():
 
 # Main multiplayer game loop
 def game_loop_mult():
-    # Ball Variables
-    ball_speed_x = -14
-    ball_speed_y = 14
+    # Points
+    pointsp1 = 0
+    pointsp2 = 0
 
+    # Ball Variables
+    ball_speed_x = -3
+    ball_speed_y = 3
+    BALL_X = 400
+    BALL_Y = 300
+
+    # Cursor Variables
     LEFT_X = 30
     LEFT_Y = 250
-
     RIGHT_X = 750
     RIGHT_Y = 250
-
-    BALL_X = 300
-    BALL_Y = 300
 
     clock = pygame.time.Clock()
     run = True
@@ -105,9 +110,16 @@ def game_loop_mult():
             ball_speed_x *= -1
 
         if BALL_X < 10:
-            ball_speed_x *= -1
+            sleep(1)
+            BALL_X = 400
+            BALL_Y = 300
+            pointsp2 =+ 1
         if BALL_X > 790:
-            ball_speed_x *= -1
+            sleep(0.8)
+            BALL_X = 400
+            BALL_Y = 300
+            pointsp1 =+ 1
+
 
         if BALL_Y < 10:
             ball_speed_y *= -1
