@@ -2,9 +2,9 @@
 
 My take on the classic game Pong with singleplayer and local multiplayer
 
-Left Player - Use W and S to move up and down
+Left Player - Use w and s keys to move up and down
 
-Right Player - Use I and K to move up and down
+Right Player - Use i and k keys to move up and down
 
 # Game Modes
 Classic - Normal Pong Game, 10 points to win
