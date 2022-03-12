@@ -2,10 +2,11 @@
 
 My take on the classic game Pong with singleplayer and local multiplayer
 
-
 # Game Modes
 Classic - Normal Pong Game, 10 points to win
+
 Blitz - With each hit the ball gets faster, 10 points to win
+
 Double - 2 balls at once, 25 points to win
 
 # Images
