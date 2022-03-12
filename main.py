@@ -640,11 +640,11 @@ def game_loop_double():
 
         # End game at x points
         winner_text = ""
-        if pointsp1 == 25:
-            winner_text = "Player 1 Wins!"
+        if pointsp1 == 10:
+            winner_text = "You Win!"
 
-        if pointsp2 == 25:
-            winner_text = "Player 2 Wins!"
+        if pointsp2 == 10:
+            winner_text = "AI Wins!"
 
         if winner_text != "":
             end_game(winner_text)
