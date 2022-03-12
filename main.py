@@ -14,6 +14,7 @@ HIT = pygame.mixer.Sound('Assets/hit.mp3')
 C_WIDTH = 18
 C_HEIGHT = 100
 VEL = 15  # Cursor Speed
+VEL2 = 6 # AI Speed
 
 # Screen Variables
 WIDTH, HEIGHT = 800, 600
@@ -30,7 +31,8 @@ BLACK = (0, 0, 0)
 TITLE_FONT = pygame.font.SysFont('impact', 100)
 TITLE_TEXT = TITLE_FONT.render(
     ("PONG"), 1, WHITE)
-MULT_BUTTON = button.MultButton(200, 200, button.MULT_BUTTON_TEXT)
+SINGLE_BUTTON = button.SingleButton(200, 180, button.SINGLE_BUTTON_TEXT)
+MULT_BUTTON = button.MultButton(200, 300, button.MULT_BUTTON_TEXT)
 CLASSIC_BUTTON = button.ClassicButton(50, 50, button.CLASSIC_BUTTON_TEXT)
 BLITZ_BUTTON = button.BlitzButton(50, 230, button.BLITZ_BUTTON_TEXT)
 DOUBLE_BUTTON = button.DoubleButton(50, 400, button.DOUBLE_BUTTON_TEXT)
@@ -58,6 +60,7 @@ def main_menu():
         clock.tick(FPS)
         WIN.fill(BLACK)
         WIN.blit(TITLE_TEXT, (290, 50))
+        SINGLE_BUTTON.draw(WIN)
         MULT_BUTTON.draw(WIN)
         pygame.display.update()
         for event in pygame.event.get():
@@ -66,6 +69,8 @@ def main_menu():
                 pygame.quit()
                 sys.exit()
 
+        if SINGLE_BUTTON.draw(WIN):
+            main_game_loop()
         if MULT_BUTTON.draw(WIN):
             multselect()
 
@@ -95,6 +100,141 @@ def multselect():
             game_loop_blitz()
         if DOUBLE_BUTTON.draw(WIN):
             game_loop_double()
+
+# Main singleplayer game loop
+def main_game_loop():
+    # Points
+    pointsp1 = 0
+    pointsp2 = 0
+
+    # Ball Variables
+    ball_speed_x = -10
+    ball_speed_y = 10
+    BALL_X = 400
+    BALL_Y = 300
+
+    # Cursor Variables
+    LEFT_X = 30
+    LEFT_Y = 250
+    RIGHT_X = 750
+    RIGHT_Y = 250
+
+    clock = pygame.time.Clock()
+    run = True
+    while run:
+        clock.tick(FPS)
+        WIN.fill(BLACK)
+        draw_objects()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    run = False
+
+        # Keep track of keys pressed
+        keys = pygame.key.get_pressed()
+
+        # Left Cursor Keys
+        if keys[pygame.K_w] and LEFT_Y > 10:
+            LEFT_Y -= VEL
+        if keys[pygame.K_s] and LEFT_Y < 590 - C_HEIGHT:
+            LEFT_Y += VEL
+
+        # Setting ball movement speed
+        BALL_X += ball_speed_x
+        BALL_Y += ball_speed_y
+
+        # Drawing on-screen objects
+        left_cursor = pygame.draw.rect(WIN, WHITE, (LEFT_X, LEFT_Y, C_WIDTH, C_HEIGHT))
+        right_cursor = pygame.draw.rect(WIN, WHITE, (RIGHT_X, RIGHT_Y, C_WIDTH, C_HEIGHT))
+        ball = pygame.draw.circle(WIN, WHITE, [BALL_X, BALL_Y], 15, 0)
+
+        # Left Cursor bounce mechanics
+        if ball.collidepoint(left_cursor.topright):
+            ball_speed_x *= -1
+            ball_speed_y *= -1
+            HIT.play()
+        if ball.collidepoint(left_cursor.bottomright):
+            ball_speed_x *= -1
+            ball_speed_y *= -1
+            HIT.play()
+        elif left_cursor.colliderect(ball) and not ball.collidepoint(left_cursor.topright) or ball.collidepoint(left_cursor.bottomright):
+            ball_speed_x *= -1
+            HIT.play()
+
+        # AI Cursor bounce mechanics
+        if ball.collidepoint(right_cursor.topleft):
+            ball_speed_x *= -1
+            ball_speed_y *= -1
+            HIT.play()
+        if ball.collidepoint(right_cursor.bottomleft):
+            ball_speed_x *= -1
+            ball_speed_y *= -1
+            HIT.play()
+        elif right_cursor.colliderect(ball) and not ball.collidepoint(right_cursor.topleft) or ball.collidepoint(right_cursor.bottomleft):
+            ball_speed_x *= -1
+            HIT.play()
+
+        # Right Cursor AI
+        if BALL_Y < RIGHT_Y and RIGHT_Y > 10 and BALL_X > 300:
+            RIGHT_Y -= VEL2
+        if BALL_Y > RIGHT_Y and RIGHT_Y < 590 - C_HEIGHT and BALL_X > 300:
+            RIGHT_Y += VEL2
+        if BALL_X > 700 and RIGHT_Y > 10:
+            RIGHT_Y -= VEL2
+
+        # Ball re-appear and add score for sides + delay
+        if BALL_X < 10:
+            sleep(0.5)
+            BALL_X = 400
+            BALL_Y = 300
+            ball_speed_x = -10
+            ball_speed_y = 10
+            pointsp2 += 1
+            SCORE.play()
+        if BALL_X > 790:
+            sleep(0.5)
+            BALL_X = 400
+            BALL_Y = 300
+            ball_speed_x = -10
+            ball_speed_y = 10
+            pointsp1 += 1
+            SCORE.play()
+
+        # Ball top/bottom bounce mechanics
+        if BALL_Y < 10:
+            ball_speed_y *= -1
+        if BALL_Y > 590:
+            ball_speed_y *= -1
+
+        # Scoreboard Text
+        SCORE_FONT = pygame.font.SysFont('impact', 50)
+        P1_SCORE = SCORE_FONT.render(
+            (str(pointsp1)), 1, WHITE)
+        P2_SCORE = SCORE_FONT.render(
+            (str(pointsp2)), 1, WHITE)
+
+        # Score Display
+        WIN.blit(P1_SCORE, (330, 10))
+        WIN.blit(P2_SCORE, (445, 10))
+
+        # End game at x points
+        winner_text = ""
+        if pointsp1 == 10:
+            winner_text = "You Win!"
+
+        if pointsp2 == 10:
+            winner_text = "Your Opponent Wins!"
+
+        if winner_text != "":
+            end_game(winner_text)
+            break
+
+        # Update screen display
+        pygame.display.update()
 
 # Main multiplayer game loop
 def game_loop_mult():
