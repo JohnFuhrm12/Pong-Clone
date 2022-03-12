@@ -1,6 +1,5 @@
 import pygame
 import button
-import multiplayer
 import sys
 
 from time import sleep
@@ -53,84 +52,8 @@ def end_game(text):
     pygame.display.update()
     pygame.time.delay(2000)
 
-# Main Menu Loop
-def main_menu():
-    clock = pygame.time.Clock()
-    run = True
-    while run:
-        clock.tick(FPS)
-        WIN.fill(BLACK)
-        WIN.blit(TITLE_TEXT, (290, 50))
-        SINGLE_BUTTON.draw(WIN)
-        MULT_BUTTON.draw(WIN)
-        pygame.display.update()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-                pygame.quit()
-                sys.exit()
-
-        if SINGLE_BUTTON.draw(WIN):
-            singleselect()
-        if MULT_BUTTON.draw(WIN):
-            multselect()
-
-# Singleplayer menu loop
-def singleselect():
-    clock = pygame.time.Clock()
-    run = True
-    while run:
-        clock.tick(FPS)
-        WIN.fill(BLACK)
-        CLASSIC_BUTTON.draw(WIN)
-        BLITZ_BUTTON.draw(WIN)
-        DOUBLE_BUTTON.draw(WIN)
-        pygame.display.update()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    run = False
-
-        if CLASSIC_BUTTON.draw(WIN):
-            main_game_loop()
-        if BLITZ_BUTTON.draw(WIN):
-            game_loop_blitz()
-        if DOUBLE_BUTTON.draw(WIN):
-            game_loop_double()
-
-# Multiplayer menu loop
-def multselect():
-    clock = pygame.time.Clock()
-    run = True
-    while run:
-        clock.tick(FPS)
-        WIN.fill(BLACK)
-        CLASSIC_BUTTON.draw(WIN)
-        BLITZ_BUTTON.draw(WIN)
-        DOUBLE_BUTTON.draw(WIN)
-        pygame.display.update()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    run = False
-
-        if CLASSIC_BUTTON.draw(WIN):
-            multiplayer.game_loop_mult()
-        if BLITZ_BUTTON.draw(WIN):
-            multiplayer.game_loop_blitz()
-        if DOUBLE_BUTTON.draw(WIN):
-            multiplayer.game_loop_double()
-
-# Main singleplayer game loop
-def main_game_loop():
+# Main multiplayer game loop
+def game_loop_mult():
     # Points
     pointsp1 = 0
     pointsp2 = 0
@@ -171,6 +94,12 @@ def main_game_loop():
         if keys[pygame.K_s] and LEFT_Y < 590 - C_HEIGHT:
             LEFT_Y += VEL
 
+        # Right Cursor Keys
+        if keys[pygame.K_i] and RIGHT_Y > 10:
+            RIGHT_Y -= VEL
+        if keys[pygame.K_k] and RIGHT_Y < 590 - C_HEIGHT:
+            RIGHT_Y += VEL
+
         # Setting ball movement speed
         BALL_X += ball_speed_x
         BALL_Y += ball_speed_y
@@ -193,7 +122,7 @@ def main_game_loop():
             ball_speed_x *= -1
             HIT.play()
 
-        # AI Cursor bounce mechanics
+        # Right Cursor bounce mechanics
         if ball.collidepoint(right_cursor.topleft):
             ball_speed_x *= -1
             ball_speed_y *= -1
@@ -206,29 +135,17 @@ def main_game_loop():
             ball_speed_x *= -1
             HIT.play()
 
-        # Right Cursor AI
-        if BALL_Y < RIGHT_Y and RIGHT_Y > 10 and BALL_X > 300 and BALL_X < 700:
-            RIGHT_Y -= VEL2
-        if BALL_Y > RIGHT_Y and RIGHT_Y < 590 - C_HEIGHT and BALL_X > 300 and BALL_X < 700:
-            RIGHT_Y += VEL2
-        if BALL_X > 700 and RIGHT_Y > 10:
-            RIGHT_Y -= VEL2
-
         # Ball re-appear and add score for sides + delay
         if BALL_X < 10:
             sleep(0.5)
             BALL_X = 400
             BALL_Y = 300
-            ball_speed_x = -10
-            ball_speed_y = 10
             pointsp2 += 1
             SCORE.play()
         if BALL_X > 790:
             sleep(0.5)
             BALL_X = 400
             BALL_Y = 300
-            ball_speed_x = -10
-            ball_speed_y = 10
             pointsp1 += 1
             SCORE.play()
 
@@ -252,10 +169,10 @@ def main_game_loop():
         # End game at x points
         winner_text = ""
         if pointsp1 == 10:
-            winner_text = "You Win!"
+            winner_text = "Player 1 Wins!"
 
         if pointsp2 == 10:
-            winner_text = "AI!"
+            winner_text = "Player 2 Wins!"
 
         if winner_text != "":
             end_game(winner_text)
@@ -264,14 +181,13 @@ def main_game_loop():
         # Update screen display
         pygame.display.update()
 
-# Blitz singleplayer game loop
+# Blitz multiplayer game loop
 def game_loop_blitz():
     # Ball Color
     ball_color = 0
 
     # Cursor Speed
     VELB = 25
-    VELB2 = 12  # AI Speed
 
     # Points
     pointsp1 = 0
@@ -313,6 +229,12 @@ def game_loop_blitz():
         if keys[pygame.K_s] and LEFT_Y < 590 - C_HEIGHT:
             LEFT_Y += VELB
 
+        # Right Cursor Keys
+        if keys[pygame.K_i] and RIGHT_Y > 10:
+            RIGHT_Y -= VELB
+        if keys[pygame.K_k] and RIGHT_Y < 590 - C_HEIGHT:
+            RIGHT_Y += VELB
+
         # Setting ball movement speed
         BALL_X += ball_speed_x
         BALL_Y += ball_speed_y
@@ -338,7 +260,7 @@ def game_loop_blitz():
             ball_color += 1
             HIT.play()
 
-        # AI Cursor bounce mechanics
+        # Right Cursor bounce mechanics
         if ball.collidepoint(right_cursor.topleft):
             ball_speed_x *= -1.2
             ball_speed_y *= -1.2
@@ -353,14 +275,6 @@ def game_loop_blitz():
             ball_speed_x *= -1.2
             ball_color += 1
             HIT.play()
-
-        # Right Cursor AI
-        if BALL_Y < RIGHT_Y and RIGHT_Y > 10 and BALL_X > 300:
-            RIGHT_Y -= VELB2
-        if BALL_Y > RIGHT_Y and RIGHT_Y < 590 - C_HEIGHT and BALL_X > 300:
-            RIGHT_Y += VELB2
-        if BALL_X > 700 and RIGHT_Y > 10:
-            RIGHT_Y -= VELB2
 
         # Change ball color
         if ball_color == 1:
@@ -422,10 +336,10 @@ def game_loop_blitz():
         # End game at x points
         winner_text = ""
         if pointsp1 == 10:
-            winner_text = "You Win!"
+            winner_text = "Player 1 Wins!"
 
         if pointsp2 == 10:
-            winner_text = "AI Wins!"
+            winner_text = "Player 2 Wins!"
 
         if winner_text != "":
             end_game(winner_text)
@@ -434,11 +348,10 @@ def game_loop_blitz():
         # Update screen display
         pygame.display.update()
 
-# Double singleplayer game loop
+# Double multiplayer game loop
 def game_loop_double():
     # Cursor Speed
     VELD = 25
-    VELD2 = 8
 
     # Points
     pointsp1 = 0
@@ -487,6 +400,12 @@ def game_loop_double():
         if keys[pygame.K_s] and LEFT_Y < 590 - C_HEIGHT:
             LEFT_Y += VELD
 
+        # Right Cursor Keys
+        if keys[pygame.K_i] and RIGHT_Y > 10:
+            RIGHT_Y -= VELD
+        if keys[pygame.K_k] and RIGHT_Y < 590 - C_HEIGHT:
+            RIGHT_Y += VELD
+
         # Setting ball movement speed
         BALL1_X += ball1_speed_x
         BALL1_Y += ball1_speed_y
@@ -525,7 +444,7 @@ def game_loop_double():
             ball2_speed_x *= -1
             HIT.play()
 
-        # Right AI bounce mechanics
+        # Right Cursor bounce mechanics
         if ball1.collidepoint(right_cursor.topleft):
             ball1_speed_x *= -1
             ball1_speed_y *= -1
@@ -549,21 +468,6 @@ def game_loop_double():
         elif right_cursor.colliderect(ball2) and not ball2.collidepoint(right_cursor.topleft) or ball2.collidepoint(right_cursor.bottomleft):
             ball2_speed_x *= -1
             HIT.play()
-
-        # Right Cursor AI
-        if BALL1_Y < RIGHT_Y and RIGHT_Y > 10 and BALL1_X > 300:
-            RIGHT_Y -= VELD2
-        if BALL1_Y > RIGHT_Y and RIGHT_Y < 590 - C_HEIGHT and BALL1_X > 300:
-            RIGHT_Y += VELD2
-        if BALL1_X > 700 and RIGHT_Y > 10:
-            RIGHT_Y -= VELD2
-
-        if BALL2_Y < RIGHT_Y and RIGHT_Y > 10 and BALL2_X > 300:
-            RIGHT_Y -= VELD2
-        if BALL2_Y > RIGHT_Y and RIGHT_Y < 590 - C_HEIGHT and BALL2_X > 300:
-            RIGHT_Y += VELD2
-        if BALL2_X > 700 and RIGHT_Y > 10:
-            RIGHT_Y -= VELD2
 
         # Ball re-appear and add score for sides + delay
         if BALL1_X < 10:
@@ -652,6 +556,3 @@ def game_loop_double():
 
         # Update screen display
         pygame.display.update()
-
-if __name__ == "__main__":
-    main_menu()
